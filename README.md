@@ -623,5 +623,26 @@ Create React App doesn’t handle backend logic or databases; it just creates a 
 
 To create a project, run:
 
+```bash
+$ npx create-react-app client
+$ cd client
+$ npm start
+```
+
+```bash
+Compiled successfully!
+
+You can now view client in the browser.
+
+  Local:            http://localhost:3000/
+  On Your Network:  http://192.168.43.32:3000/
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+```
+
+Try to open the application url `http://localhost:3000` in your browser. If you see the React logo, then you've done right.
+
+To stop the client service use `CTRL + C`.
 
 
