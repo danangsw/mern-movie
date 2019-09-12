@@ -381,7 +381,247 @@ Let’s create two more folders on the server: `routes` and `controllers`. In th
 
 ```bash
 $ mkdir routes controllers
-$ nano routes/movie-router.js
-$ nano controllers/movie-ctrl.js
 ```
+Add file movie controller `controllers/movie-controller.js`:
+
+```bash
+$ nano controllers/movie-controller.js
+```
+
+```javascript
+const Movie = require('../models/movie-model')
+
+createMovie = async (req, res) => {
+    const body = req.body
+
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to create!',
+        })
+    }
+
+    const movie = new Movie(body)
+
+    if (!movie) {
+        return res.status(400).json({ success: false, error: 'Failed to mapping a body data to movie schema!' })
+    }
+
+    await Movie.find({ title: movie.title, director: movie.director }, (error, movies) => {
+        if(movies && movies.length > 0) {
+            return res.status(400).json({ success: false, error: 'Failed to create. Duplicate data!' })
+        }
+
+        movie
+        .save()
+        .then(() => {
+            return res.status(201).json({
+                success: true,
+                id: movie._id,
+                message: 'Movie created!',
+            })
+        })
+        .catch(error => {
+            console.error(error)
+            return res.status(400).json({
+                error,
+                message: 'Failed to create movie!',
+            })
+        })
+    })
+}
+
+updateMovie = async (req, res) => {
+    const body = req.body
+
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update!',
+        })
+    }
+
+    await Movie.findOne({ _id: req.params.id }, (err, movie) => {
+        if (!movie) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Movie not found` })
+        }
+
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        movie.title = body.title ? body.title : movie.title
+        movie.synopsis = body.synopsis ? body.synopsis : movie.synopsis
+        movie.director = body.director ? body.director : movie.director
+        movie.writers = body.writers ? body.writers : movie.writers
+        movie.stars = body.stars ? body.stars : movie.stars
+        movie.rating = body.rating ? body.rating : movie.rating
+        movie.showtimes = body.showtimes ? body.showtimes : movie.showtimes
+        movie
+            .save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: movie._id,
+                    message: 'Movie updated!',
+                })
+            })
+            .catch(error => {
+                console.error(error)
+                return res.status(404).json({
+                    error,
+                    message: 'Failed to update Movie!',
+                })
+            })
+    })
+}
+
+deleteMovie = async (req, res) => {
+    await Movie.findOneAndDelete({ _id: req.params.id }, (err, movie) => {
+        if (!movie) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Movie not found` })
+        }
+
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: movie, message: 'Movie deleted!' })
+    })
+    .catch(error => {
+        console.error(error)
+        return res.status(400).json({
+            error,
+            message: 'Failed to delete Movie!',
+        })
+    })
+}
+
+findMovieById = async (req, res) => {
+    await Movie.findOne({ _id: req.params.id }, (err, movie) => {
+        if (!movie) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Movie not found` })
+        }
+
+        if (err) {
+            console.error(err)
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: movie })
+    })
+    .catch(error => {
+        console.error(error)
+        return res.status(400).json({
+            error,
+            message: 'Failed to find a Movie!',
+        })
+    })
+}
+
+findAllMovies = async (req, res) => {
+    await Movie.find({}, (err, movies) => {
+        if (!movies | !movies.length) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Movie not found` })
+        }
+
+        if (err) {
+            console.error(err)
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: movies })
+    })
+    .catch(error => {
+        console.error(error)
+        return res.status(400).json({
+            error,
+            message: 'Failed to find all Movie!',
+        })
+    })
+}
+
+module.exports = {
+    createMovie,
+    updateMovie,
+    deleteMovie,
+    findMovieById,
+    findAllMovies
+}
+
+```
+
+Add file movie route `routes/movie-router.js`:
+
+```bash
+$ nano routes/movie-router.js
+```
+
+```javascript
+const express = require('express')
+
+const MovieController = require('../controllers/movie-controller')
+
+const router = express.Router()
+
+router.post('/movie', MovieController.createMovie)
+router.put('/movie/:id', MovieController.updateMovie)
+router.delete('/movie/:id', MovieController.deleteMovie)
+router.get('/movie/:id', MovieController.findMovieById)
+router.get('/movies', MovieController.findAllMovies)
+
+module.exports = router
+
+```
+
+The project directory tree will be like:
+
+```bash
+tree ../. -I node_modules
+../.
+└── server
+    ├── controllers
+    │   └── movie-controller.js
+    ├── db
+    │   └── index.js
+    ├── index.js
+    ├── models
+    │   └── movie-model.js
+    ├── package.json
+    ├── package-lock.json
+    └── routes
+        └── movie-router.js
+```
+
+(Optional) Commit the changes to Git repository.
+
+### 1.3. Testing the Backend API
+
+To test the API application we will use Postman. You can import [these collection file](/server/data-testing/MERN.postman_collection.json) to Postman.
+
+Go to [here](https://www.getpostman.com/downloads/) and choose your desired platform among Mac, Windows or Linux. Click Download.
+
+Follow [this tutorial](https://www.guru99.com/postman-tutorial.html) to learn Postman for beginners with API Testing example.
+
+## 2. Frontend Development
+
+Frontend is all of the visual part, where user will interact with the application.
+
+We will use [Create React App](https://reactjs.org/docs/create-a-new-react-app.html#create-react-app), the recommended toolchains for a new frontend single-page application in React.
+
+It sets up your development environment so that you can use the latest JavaScript features, provides a nice developer experience, and optimizes your app for production. You’ll need to have Node >= 8.10 and npm >= 5.6 on your machine. 
+
+Create React App doesn’t handle backend logic or databases; it just creates a frontend build pipeline, so you can use it with any backend you want. Under the hood, it uses [Babel](https://babeljs.io/) and [webpack](https://webpack.js.org/), but you don’t need to know anything about them.
+
+To create a project, run:
+
+
 

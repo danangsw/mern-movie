@@ -24,7 +24,7 @@ app.use('/api/v0.1', MovieRouter)
 
 // The 404 Route (ALWAYS Keep this as the last route)
 app.all('*', function (req, res) {
-    res.status(404).json({ message: "Not found!" }, 404);
+    res.status(404).json({ message: "Not found!" });
 });
 
 app.listen(port, () => {

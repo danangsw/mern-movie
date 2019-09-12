@@ -1,6 +1,6 @@
 const Movie = require('../models/movie-model')
 
-createMovie = (req, res) => {
+createMovie = async (req, res) => {
     const body = req.body
 
     if (!body) {
@@ -16,7 +16,12 @@ createMovie = (req, res) => {
         return res.status(400).json({ success: false, error: 'Failed to mapping a body data to movie schema!' })
     }
 
-    movie
+    await Movie.find({ title: movie.title, director: movie.director }, (error, movies) => {
+        if(movies && movies.length > 0) {
+            return res.status(400).json({ success: false, error: 'Failed to create. Duplicate data!' })
+        }
+
+        movie
         .save()
         .then(() => {
             return res.status(201).json({
@@ -32,6 +37,7 @@ createMovie = (req, res) => {
                 message: 'Failed to create movie!',
             })
         })
+    })
 }
 
 updateMovie = async (req, res) => {
@@ -45,21 +51,23 @@ updateMovie = async (req, res) => {
     }
 
     await Movie.findOne({ _id: req.params.id }, (err, movie) => {
-        if (err) {
-            console.error(err)
-            return res.status(404).json({
-                err,
-                message: 'Movie not found!',
-            })
+        if (!movie) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Movie not found` })
         }
 
-        movie.title = body.title
-        movie.synopsis = body.synopsis
-        movie.director = body.director
-        movie.writers = body.writers
-        movie.stars = body.stars
-        movie.rating = body.rating
-        movie.showtimes = body.showtimes
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        movie.title = body.title ? body.title : movie.title
+        movie.synopsis = body.synopsis ? body.synopsis : movie.synopsis
+        movie.director = body.director ? body.director : movie.director
+        movie.writers = body.writers ? body.writers : movie.writers
+        movie.stars = body.stars ? body.stars : movie.stars
+        movie.rating = body.rating ? body.rating : movie.rating
+        movie.showtimes = body.showtimes ? body.showtimes : movie.showtimes
         movie
             .save()
             .then(() => {
@@ -81,14 +89,14 @@ updateMovie = async (req, res) => {
 
 deleteMovie = async (req, res) => {
     await Movie.findOneAndDelete({ _id: req.params.id }, (err, movie) => {
-        if (err) {
-            return res.status(400).json({ success: false, error: 'You must provide a body to delete' })
-        }
-
         if (!movie) {
             return res
                 .status(404)
                 .json({ success: false, error: `Movie not found` })
+        }
+
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
         }
 
         return res.status(200).json({ success: true, data: movie, message: 'Movie deleted!' })
@@ -104,16 +112,17 @@ deleteMovie = async (req, res) => {
 
 findMovieById = async (req, res) => {
     await Movie.findOne({ _id: req.params.id }, (err, movie) => {
-        if (err) {
-            console.error(err)
-            return res.status(400).json({ success: false, error: err })
-        }
-
         if (!movie) {
             return res
                 .status(404)
                 .json({ success: false, error: `Movie not found` })
         }
+
+        if (err) {
+            console.error(err)
+            return res.status(400).json({ success: false, error: err })
+        }
+
         return res.status(200).json({ success: true, data: movie })
     })
     .catch(error => {
@@ -127,15 +136,17 @@ findMovieById = async (req, res) => {
 
 findAllMovies = async (req, res) => {
     await Movie.find({}, (err, movies) => {
-        if (err) {
-            console.error(err)
-            return res.status(400).json({ success: false, error: err })
-        }
-        if (!movies.length) {
+        if (!movies | !movies.length) {
             return res
                 .status(404)
                 .json({ success: false, error: `Movie not found` })
         }
+
+        if (err) {
+            console.error(err)
+            return res.status(400).json({ success: false, error: err })
+        }
+
         return res.status(200).json({ success: true, data: movies })
     })
     .catch(error => {

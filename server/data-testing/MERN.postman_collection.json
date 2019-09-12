@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "2a3e34b9-828b-422c-af94-3836d159d2ff",
+		"name": "MERN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET /movies",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}/api/v0.1/movies",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v0.1",
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /movie/:id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}/api/v0.1/movie/5d7a109e4c55f82200ef87c4",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v0.1",
+						"movie",
+						"5d7a109e4c55f82200ef87c4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /movie/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}/api/v0.1/movie/5d7a1a3a34dc58254154532e",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v0.1",
+						"movie",
+						"5d7a1a3a34dc58254154532e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /movie",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"KKN di Desa Penari\",\n\t\"synopsis\": \"Sebuah cerita berdasarkan kisah nyata...\",\n    \"director\": \"Joko Ambyar\",\n    \"writers\": [\"SimpleBoy\", \"Boboi\"],\n    \"stars\": [\"Bima\", \"Ayu\", \"Widya\", \"Nur\"],\n    \"rating\": 10,\n    \"showtimes\": [\"14:00\", \"19:00\"]\n}"
+				},
+				"url": {
+					"raw": "http://{{url}}/api/v0.1/movie",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v0.1",
+						"movie"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /movie/:id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Joker (2019)\",\n\t\"synopsis\": \"An original standalone origin story of the iconic villain not seen before on the big screen, it's a gritty character study of Arthur Fleck, a man disregarded by society, and a broader cautionary tale. \",\n    \"director\": \"Todd Phillips\",\n    \"writers\": [\"Todd Phillips\", \"Scott Silver\"],\n    \"stars\": [ \"Joaquin Phoenix\", \"Zazie Beetz\", \"Robert De Niro\"],\n    \"rating\": 9.6,\n    \"showtimes\": [\"11:45\", \"14:00\", \"18:15\"]\n}"
+				},
+				"url": {
+					"raw": "http://{{url}}/api/v0.1/movie/5d7a109e4c55f82200ef87c4",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v0.1",
+						"movie",
+						"5d7a109e4c55f82200ef87c4"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
