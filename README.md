@@ -145,7 +145,11 @@ $ git commit -m "Initial Commit"
 $ cd server/
 ```
 
-Create the starting application file, named `index.js`:
+Create the starting application file, named `server/index.js`:
+```bash
+$ nano server/index.js
+```
+
 ```javascript
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -219,9 +223,10 @@ And that’s it, we’ve just created our database with these commands.
 Create the directory for database connection.
 ```bash
 $ mkdir db
+$ nano db/index.js
 ```
 
-Create `index.js` file with following code:
+Create `db/index.js` file with following code:
 ```javascript
 const mongoose = require('mongoose')
 
@@ -320,3 +325,63 @@ tcp    0     0 0.0.0.0:80     0.0.0.0:*     LISTEN      9631/node
 ```bash
 $ sudo kill -9 9631
 ```
+
+### 1.1.1. Creating Schema Movie
+
+Let’s create a folder called `models` and add a file called `movie-model.js`.
+
+```bash
+$ mkdir models
+$ nano models/movie-model.js
+```
+
+Creating schema for movie model in the file `models/movie-model.js`.
+
+```javascript
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+const Movie = new Schema(
+    {
+        title: { type: String, required: true },
+        synopsis: { type: String, required: true },
+        director: { type: String, required: true },
+        writers: { type: [String], required: true },
+        stars: { type: [String], required: true },
+        rating: { type: Number, required: true, min: 0, max: 10 },
+        showtimes: { type: [String], required: true }
+    },
+    { timestamps: true },
+)
+
+module.exports = mongoose.model('movies', Movie)
+
+```
+
+The project directory tree will be like:
+
+```bash
+$ tree ../. -I node_modules
+../.
+└── server
+    ├── db
+    │   └── index.js
+    ├── index.js
+    ├── models
+    │   └── movie-model.js
+    ├── package.json
+    └── package-lock.json
+```
+
+### 1.2. Creating Routes
+
+We will create all the CRUD operations and create our REST endpoints. 
+
+Let’s create two more folders on the server: `routes` and `controllers`. In the route folder, let’s create the file `routes/movie-router.js` and in the controller folder, `controllers/movie-controller.js`.
+
+```bash
+$ mkdir routes controllers
+$ nano routes/movie-router.js
+$ nano controllers/movie-ctrl.js
+```
+
