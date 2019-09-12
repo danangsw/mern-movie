@@ -190,3 +190,116 @@ $ curl "http://127.0.0.1:3000"
 
 (Optional) Commit the changes to Git repository.
 
+## 1.1 Install MongoDB
+
+To install, manage and securing the MongoDB server, you can just follow the steps [on this link](https://github.com/danangsw/mongodb-learning#step-1---installing-mongodb).
+
+Login to your MongoDB server:
+
+```bash
+$ mongo -u admin -p --authenticationDatabase admin
+MongoDB shell version v3.6.3
+Enter password:
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.6.3
+Server has startup warnings:
+2019-09-12T08:32:44.704+0700 I STORAGE  [initandlisten]
+2019-09-12T08:32:44.704+0700 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2019-09-12T08:32:44.704+0700 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+```
+
+Creating the `cinema` database:
+```bash
+> use cinema
+switched to db cinema
+```
+
+And that’s it, we’ve just created our database with these commands. 
+
+Create the directory for database connection.
+```bash
+$ mkdir db
+```
+
+Create `index.js` file with following code:
+```javascript
+const mongoose = require('mongoose')
+
+const MONGO_USERNAME = 'superadmin'
+const MONGO_PASSWORD = 'superadmin123'
+const MONGO_HOSTNAME = '127.0.0.1'
+const MONGO_PORT = '27017'
+const MONGO_DB = 'cinema'
+
+const dburl = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+
+mongoose
+    .connect(dburl, {useNewUrlParser: true})
+    .then(() => {
+        console.log('mongoDB is connected...')
+    })
+    .catch(e => {
+        console.error('Connection error: ', e.message)
+    })
+
+const db = mongoose.connection
+
+module.exports = db
+```
+
+Update the main file `server/index.js` to be like:
+```javascript
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const app = express()
+const port = 3000
+// import db/index.js
+const db = require('./db')
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cors())
+app.use(bodyParser.json())
+
+// add database connection response
+db.on('error', console.error.bind(console, 'MongoDB connection error: '))
+
+app.get('/', (req, res) => {
+    res.send({ message: 'Hello World!' })
+})
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}...`)
+})
+```
+
+Your server tree directory will be like:
+```bash
+$ tree -I node_modules
+.
+└── server
+    ├── db
+    │   └── index.js
+    ├── index.js
+    ├── package.json
+    └── package-lock.json
+```
+
+Running to test the result:
+```bash
+$ npm run start
+
+> server@1.0.0 start /home/dsw/projects/mongodb/github.com/danangsw/mern-movies/server
+> nodemon index.js
+
+[nodemon] 1.19.2
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching dir(s): *.*
+[nodemon] starting `node index.js`
+(node:20383) DeprecationWarning: current Server Discovery and Monitoring engine is deprecated, and will be removed in a future version. To use the new Server Discover and Monitoring engine, pass option { useUnifiedTopology: true } to the MongoClient constructor.
+Server running on port 3000...
+mongoDB is connected...
+
+```
+
+(Optional) Commit the changes to Git repository.
