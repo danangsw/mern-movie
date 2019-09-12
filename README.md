@@ -83,6 +83,14 @@ Let's install the package dependencies:
 $ npm install express body-parser cors mongoose nodemon
 ```
 
+This backend application uses following the package dependencies:
+
+- **Express:** It’s the server framework (The E in MERN).
+- **Body Parser:** Responsible to get the body off of network request.
+- **Nodemon:** Restart the server when it sees changes (for a better dev experience).
+- **Cors:** Package for providing a Connect/Express middleware that can be used to enable CORS with various options.
+- **Mongoose:** It's an elegant MongoDB object modeling for node.js
+
 The output will be like:
 
 ```bash
@@ -126,4 +134,59 @@ Setup `nodemon` on the `package.json` file:
 ```bash
 $ cd ..
 $ git add .
+$ git commit -m "Initial Commit"
+[master (root-commit) bdaa3d4] Initial Commit
+ 4 files changed, 2948 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 README.md
+ create mode 100644 server/package-lock.json
+ create mode 100644 server/package.json
+ 
+$ cd server/
 ```
+
+Create the starting application file, named `index.js`:
+```javascript
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const app = express()
+const port = 3000
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cors())
+app.use(bodyParser.json())
+
+app.get('/', (req, res) => {
+    res.send({ message: 'Hello World!' })
+})
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}...`)
+})
+```
+
+To start the application:
+
+```bash
+$ npm run start
+
+> server@1.0.0 start /home/dsw/projects/mongodb/github.com/danangsw/mern-movies/server
+> nodemon index.js
+
+[nodemon] 1.19.2
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching dir(s): *.*
+[nodemon] starting `node index.js`
+Server running on port 3000...
+```
+
+Verify the server application:
+
+```bash
+$ curl "http://127.0.0.1:3000"
+{"message":"Hello World!"}%  
+```
+
+(Optional) Commit the changes to Git repository.
+
