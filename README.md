@@ -303,3 +303,20 @@ mongoDB is connected...
 ```
 
 (Optional) Commit the changes to Git repository.
+
+**TIPS:** If you failed when run server application using node as following:
+```bash
+Error: listen EADDRINUSE: address already in use :::3000
+    at Server.setupListenHandle [as _listen2] (net.js:1279:14)
+    at listenInCluster (net.js:1327:12)
+    at Server.listen (net.js:1414:7)
+```
+
+Try to kill a nodejs process in linux:
+```bash
+$ sudo netstat -lpn |grep :'3000'
+tcp    0     0 0.0.0.0:80     0.0.0.0:*     LISTEN      9631/node    
+```
+```bash
+$ sudo kill -9 9631
+```
