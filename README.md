@@ -712,7 +712,7 @@ $ npm install styled-components react-table react-router-dom axios bootstrap --s
 > ```
 > 
 
-### 2.1. Developing FrondEnd Application
+### 2.1. Setup FrondEnd Folder Structure
 The `src` directory will be the main directory for the client application. We will create following directory in the `src` directory: `api`, `app`, `components`, `pages`, `style`.
 
 ```bash
@@ -756,3 +756,20 @@ $ tree -I node_modules .
         └── index.js
 ```
 
+Update the file `client/src/index.js` to be:
+
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './app';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+### 2.2. Developing Components
+
+Create the components of client application as following:
+
+```bash
+
+```
