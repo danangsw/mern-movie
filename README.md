@@ -309,22 +309,24 @@ mongoDB is connected...
 
 (Optional) Commit the changes to Git repository.
 
-**TIPS:** If you failed when run server application using node as following:
-```bash
-Error: listen EADDRINUSE: address already in use :::3000
-    at Server.setupListenHandle [as _listen2] (net.js:1279:14)
-    at listenInCluster (net.js:1327:12)
-    at Server.listen (net.js:1414:7)
-```
-
-Try to kill a nodejs process in linux:
-```bash
-$ sudo netstat -lpn |grep :'3000'
-tcp    0     0 0.0.0.0:80     0.0.0.0:*     LISTEN      9631/node    
-```
-```bash
-$ sudo kill -9 9631
-```
+>
+>**TIPS:** If you failed when run server application using node as following:
+>```bash
+>Error: listen EADDRINUSE: address already in use :::3000
+>    at Server.setupListenHandle [as _listen2] (net.js:1279:14)
+>    at listenInCluster (net.js:1327:12)
+>    at Server.listen (net.js:1414:7)
+>```
+>
+>Try to kill a nodejs process in linux:
+>```bash
+>$ sudo netstat -lpn |grep :'3000'
+>tcp    0     0 0.0.0.0:80     0.0.0.0:*     LISTEN      9631/node    
+>```
+>```bash
+>$ sudo kill -9 9631
+>```
+>
 
 ### 1.1.1. Creating Schema Movie
 
@@ -645,4 +647,112 @@ Try to open the application url `http://localhost:3000` in your browser. If you 
 
 To stop the client service use `CTRL + C`.
 
+> 
+>**TIPS:** The default port for your client is 3000, but have already set this port to the Backend app. We can change the port for client to 8000.
+>
+>```javascript
+>  "scripts": {
+>    "start": "PORT=8080 react-scripts start",
+>    "build": "react-scripts build",
+>    "test": "react-scripts test",
+>    "eject": "react-scripts eject"
+>  },
+>```
+>
+
+If you notice, the React creates some default directories and files. Let's see the client tree directory
+
+```bash
+$ tree -I node_modules .
+.
+├── package.json
+├── package-lock.json
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   └── robots.txt
+├── README.md
+└── src
+    ├── App.css
+    ├── App.js
+    ├── App.test.js
+    ├── index.css
+    ├── index.js
+    ├── logo.svg
+    └── serviceWorker.js
+```
+
+For now we don't need to worry about these files.
+
+>
+> **TIPS:** We can remove the unnecessaries files that don't need to the project:
+> ```bash
+> $ rm src/App.css src/index.css src/App.test.js src/serviceWorker.js
+> ```
+> 
+
+Setup the package depedencies for the client project. We will need :
+- **[axios](https://github.com/axios/axios):** It’s a promise-based the asynchronous code. It’s the most popular promise based HTTP.
+- **[bootstrap](https://getbootstrap.com/):** It’s is an open-source toolkit and the most popular front-end component library where allows you for developing with HTML, CSS, and JS.
+- **[styled-components](https://www.styled-components.com/)**: It allows you to write actual CSS code to style your components.
+- **[react-table](https://github.com/tannerlinsley/react-table)**: It’s a lightweight, fast and extendable data grid built for React.
+- **[react-router-dom](https://reacttraining.com/react-router/web/guides/quick-start)**: DOM bindings for React Routers.
+
+```bash
+$ npm install styled-components react-table react-router-dom axios bootstrap --save
+```
+
+>
+> **TIPS:** If you found some warning message, i.e `npm WARN @...`, you can install the depedencies warning for example:
+> ```bash
+> $ npm install eslint typescript jquery popper.js --save-dev
+> ```
+> 
+
+### 2.1. Developing FrondEnd Application
+The `src` directory will be the main directory for the client application. We will create following directory in the `src` directory: `api`, `app`, `components`, `pages`, `style`.
+
+```bash
+$ cd src
+$ mkdir api app components pages style
+$ touch api/index.js app/index.js components/index.js pages/index.js style/index.js
+```
+
+Move the `App.js` file to `app` directory, then renaming it to `index.js`:
+```bash
+$ mv App.js app/index.js
+```
+
+From now, the client tree directory will be like:
+
+```bash
+$ tree -I node_modules .
+.
+├── package.json
+├── package-lock.json
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   └── robots.txt
+├── README.md
+└── src
+    ├── api
+    │   └── index.js
+    ├── app
+    │   └── index.js
+    ├── components
+    │   └── index.js
+    ├── index.js
+    ├── logo.svg
+    ├── pages
+    │   └── index.js
+    └── style
+        └── index.js
+```
 
