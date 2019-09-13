@@ -131,6 +131,7 @@ Setup `nodemon` on the `package.json` file:
 ```
 
 (Optional) Commit the changes to Git repository:
+
 ```bash
 $ cd ..
 $ git add .
@@ -951,4 +952,267 @@ $ tree -I node_modules .
 ```
 
 Then verify the frontend app from your browser `http://localhost:8080`.
+
+(Optional) Commit the changes to Git repository.
+
+### 2.3. Integrating FrontEnd with BackEnd API
+
+Update the file `api/index.js`:
+
+```javascript
+```
+
+Create following application's pages in folder `pages`: : `MoviesList.jsx`, `MoviesInsert.jsx` and `MoviesUpdate.jsx`.
+
+```bash
+$ touch pages/MovieList.jsx pages/MovieCreate.jsx pages/MovieUpdate.jsx
+```
+
+Update the file `pages/MovieList.jsx` as following:
+
+```javascript
+import React, { Component } from 'react'
+import ReactTable from 'react-table'
+import movieAPI from '../api'
+
+import Styled from 'styled-components'
+
+import 'react-table/react-table.css'
+
+const Wrapper = Styled.div`
+    padding: 0 40x 40x 40x;
+`
+const Update = Styled.div`
+    color: #0000ff;
+    cursor: pointer;
+`
+
+const Delete = Styled.div`
+    color: #ff0000;
+    cursor: pointer;
+`
+
+class UpdateMovie extends Component {
+    updateMovie = event => {
+        event.preventDefault()
+
+        window.location.href = `/movies/update/${this.props.id}`
+    }
+
+    render() {
+        return <Update onClick={ this.updateMovie }>Edit</Update>
+    }
+}
+
+class DeleteMovie extends Component {
+    deleteMovie = event => {
+        event.preventDefault()
+
+        if(
+            window.confirm(`Do you want to delete the movie ${this.props.id} permanently?`)
+        ) {
+            movieAPI.deleteMovie(this.props.id)
+            window.location.reload()
+        }
+    }
+
+    render() {
+        return <Delete onClick={ this.deleteMovie }>Delete</Delete>
+    }
+}
+
+class MovieList extends Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            movies: [],
+            columns: [],
+            isLoading: false,
+        }
+    }
+
+    componentDidMount = async () => {
+        this.setState({ isLoading: true })
+
+        await movieAPI.getAllMovies()
+            .then(movies => {
+                this.setState({
+                    movies: movies.data.data,
+                    isLoading: false,
+                })
+            })
+            .catch( error => {
+                this.setState({
+                    movies: [],
+                    isLoading: true,
+                })
+            })
+    }
+
+    render() {
+        const { movies, isLoading } = this.state
+        console.log('TCL: MovieList -> render -> movies', movies)
+
+        const columns = [
+            {
+                Header: 'ID',
+                accessor: '_id',
+                filterable: true,
+                show: false
+            },
+            {
+                Header: 'Title',
+                accessor: 'title',
+                filterable: true,
+            },
+            {
+                Header: 'Rating',
+                accessor: 'rating',
+                filterable: true,
+            },
+            {
+                Header: 'Showtimes',
+                accessor: 'showtimes',
+                Cell: props => <span>{ props.value.join(' | ')}</span>
+            },
+            {
+                Header: '',
+                accessor: '',
+                Cell: function(props) {
+                    return (
+                        <span>
+                            <DeleteMovie id={props.original._id} />
+                        </span>
+                    )
+                },
+            },
+            {
+                Header: '',
+                accessor: '',
+                Cell: function(props) {
+                    return (
+                        <span>
+                            <UpdateMovie id={props.original._id} />
+                        </span>
+                    )
+                },
+            },
+        ]
+
+        let showtable = true
+
+        if (!movies.length) {
+            showtable = false
+        }
+
+        return (
+            <Wrapper>
+                { showtable && (
+                    <ReactTable
+                        data={movies}
+                        columns={columns}
+                        loading={isLoading}
+                        defaultPageSize={10}
+                        showPageSizeOptions={true}
+                        minRows={0}
+                    />
+                )}
+            </Wrapper>
+        )
+    }
+}
+
+export default MovieList
+```
+
+Update the file `pages/index.js`
+
+```javascript
+import MovieList from './MoviesList'
+
+export { MovieList }
+```
+
+Update the file `app/index.js`:
+
+```javascript
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+
+import { NavBar } from '../components'
+import { MovieList } from '../pages'
+
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+function App() {
+  return (
+    <Router>
+        <NavBar />
+        <Switch>
+            <Route path="/movie/list" exact component={MovieList} />
+        </Switch>
+    </Router>
+  )
+}
+
+export default App
+
+```
+
+Verify the frontend and backend integration:
+1. Running the backend API server
+```bash
+$ cd server
+$ npm run start
+```
+
+2. Running the frontend server
+```bash
+$ cd client
+$ npm start
+```
+
+3. Open the frontend app from your browser `http://localhost:8080`
+If you see the movie list table with your movie data, you have done right.
+
+>**TIPS** If you open the frontend app in your browser then you get error like: `GET http://localhost:3000/api/v0.1/movies net::ERR_CONNECTION_REFUSED`. Try to fix using following solution:
+>1. In the file `client/src/api/index.js`, modify the baseUrl API to be the host or server IP address instead of localhost or 127.0.0.1, i.e: 
+> ```javascript
+>...
+>const api = Axios.create({
+>    baseURL: 'http://192.168.33.44:3000/api/v0.1'
+>   //instead of baseURL: 'http://localhost:3000/api/v0.1' 
+>})
+> ...
+>```
+
+(Optional) Commit the changes to your GIT repository.
+
+Let's continue to completing the create and update pages.
+
+Update the file `pages/MoviesInsert.jsx` as following:
+
+```javascript
+```
+
+Update the file `pages/MoviesUpdate.jsx` as following:
+
+```javascript
+```
+
+Update the file `pages/index.jsx` as following:
+
+```javascript
+import MovieList from './MoviesList'
+import MovieCreate from './MovieCreate'
+import MovieUpdate from './MovieUpdate'
+
+export { MovieList, MovieCreate, MovieUpdate }
+```
+
+Update the file `app/index.js`:
+
+```javascript
+```
 
