@@ -771,5 +771,184 @@ ReactDOM.render(<App />, document.getElementById('root'));
 Create the components of client application as following:
 
 ```bash
+$ touch components/NavigationBar.jsx components/Logo.jsx components/Links.jsx
+$ ls components
+```
+
+> [JSX](https://reactjs.org/docs/introducing-jsx.html) is a syntax **J**ava**S**cript e**X**tension. It’s recommended to use it with React to describe what the UI should look like. JSX produces React `elements` taht rendereing them to the DOM.
+
+Create file `components/Logo.jsx` that will be like:
+
+```javascript
+import React, { Component } from 'react'
+import Styled from 'styled-components'
+import logoImage from '../logo.svg'
+
+const Wrapper = Styled.a.attrs({
+    className: 'navbar-brand',
+})``
+
+class Logo extends Component {
+    render() {
+        return (
+            <Wrapper href="http://ubuntu.vbox:8080">
+                <img src={logoImage} width="50" height="50" alt="http://ubuntu.vbox:8080" />
+            </Wrapper>
+        )
+    }
+}
+
+export default Logo
 
 ```
+
+Then, create file `components/Links.jsx` that will be like:
+
+```javascript
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import Styled from "styled-components"
+
+const Collapse = Styled.div.attrs({
+    className: 'collapse navbar-collapse'
+})``
+
+const List = Styled.div.attrs({
+    className: 'navbar-nav mr-auto'
+})``
+
+const Item = Styled.div.attrs({
+    className: 'collapse navbar-collapse'
+})``
+
+class Links extends Component {
+    render() {
+        return (
+            <React.Fragment>
+                <Link to="/" className="navbar-brand">
+                    A Simple MERN Movie Application 
+                </Link>
+                <Collapse>
+                    <List>
+                        <Item>
+                            <Link to="/" className="nav-link">
+                                Movies 
+                            </Link>
+                        </Item>
+                        <Item>
+                            <Link to="/" className="nav-link">
+                                Create Movie 
+                            </Link>
+                        </Item>
+                    </List>
+                </Collapse>
+            </React.Fragment>
+        )
+    }
+}
+
+export default Links
+
+```
+
+Then, create file `components/NavigationBar.jsx` that will be like:
+
+```javascript
+import React, { Component } from 'react'
+import Styled from "styled-components"
+
+import Links from './Links'
+import Logo from './Logo'
+
+const Container = Styled.div.attrs({
+    className: 'container'
+})``
+
+const Nav = Styled.div.attrs({
+    className: 'navbar navbar-expand-lg navbar-dark bg-dark'
+})`
+    margin-bottom: 20px;
+`
+
+class NavBar extends Component {
+    render() {
+        return (
+            <Container>
+                <Nav>
+                    <Logo />
+                    <Links />
+                </Nav>
+            </Container>
+        ) 
+    }
+}
+
+export default NavBar
+
+```
+
+Let's update the file `components/index.js`, it will export our components:
+
+```javascript
+import Links from './Links'
+import Logo from './Logo'
+import NavBar from './NavigationBar'
+
+export { Links, Logo, NavBar }
+```
+
+Modify the file `app/index.js` as following:
+
+```javascript
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom'
+import { NavBar } from '../components'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+function App() {
+  return (
+    <Router>
+        <NavBar />
+    </Router>
+  )
+}
+
+export default App
+
+```
+
+From now, the client directory tree will be like:
+
+```bash
+$ tree -I node_modules .
+.
+├── package.json
+├── package-lock.json
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   └── robots.txt
+├── README.md
+└── src
+    ├── api
+    │   └── index.js
+    ├── app
+    │   └── index.js
+    ├── components
+    │   ├── index.js
+    │   ├── Links.jsx
+    │   ├── Logo.jsx
+    │   └── NavigationBar.jsx
+    ├── index.js
+    ├── logo.svg
+    ├── pages
+    │   └── index.js
+    └── style
+        └── index.js
+```
+
+Then verify the frontend app from your browser `http://localhost:8080`.
+
