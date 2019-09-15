@@ -158,10 +158,41 @@ findAllMovies = async (req, res) => {
     })
 }
 
+findTopRatedMovies = async (req, res) => {
+    const body = req.body
+    let limit = 1
+
+    if(body && body.limit) {
+        limit = parseInt(body.limit)
+    }
+
+    await Movie.find({}).sort({ rating: -1 }).limit(limit)
+    .then((movies) => {
+            console.log(movies)
+            
+            if (!movies | !movies.length) {
+                return res
+                    .status(404)
+                    .json({ success: false, error: `Movie not found` })
+            }
+    
+            return res.status(200).json({ success: true, data: movies })
+    }) 
+    .catch(error => {
+        console.error(error)
+        return res.status(400).json({
+            error,
+            message: 'Failed to find Movies!',
+        })
+    })
+
+}
+
 module.exports = {
     createMovie,
     updateMovie,
     deleteMovie,
     findMovieById,
-    findAllMovies
+    findAllMovies,
+    findTopRatedMovies
 }
