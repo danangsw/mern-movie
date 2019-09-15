@@ -1730,7 +1730,7 @@ $ cd client
 $ npm start
 ```
 
-Running the MERN application in your browser: `http://localhost:8000`
+Running the MERN application in your browser: `http://localhost:8080`
 
 
 ## Credit:
