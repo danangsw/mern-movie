@@ -29,7 +29,7 @@ const SubmitButton = Styled.button.attrs({
     margin: 15px 15px 15px 5px; 
 `
 
-const CancelButton = Styled.button.attrs({
+const CancelButton = Styled.a.attrs({
     className: 'btn btn-danger',
 })`
     margin: 15px 15px 15px 5px; 
@@ -101,16 +101,16 @@ class MovieCreate extends Component {
 
         const writersToArr = writers.split(', ')
         const starsToArr = stars.split(', ')
-        const showtimesToArr = showtimes.split(' | ')
+        const showtimesToArr = showtimes.split(', ')
 
         const payload =  {
             title,
             synopsis,
             director,
-            writersToArr,
-            starsToArr,
+            writers: writersToArr,
+            stars: starsToArr,
             rating,
-            showtimesToArr,
+            showtimes: showtimesToArr,
         }
 
         await movieAPI.createMovie(payload)
@@ -149,10 +149,13 @@ class MovieCreate extends Component {
                 <Title>Create Movie</Title>
                 
                 <Label>Title: </Label>
-                <InputText type="text" value={title} onChange={this.handleChangeInputTitle}/>
+                <InputText type="text" value={title} onChange={this.handleChangeInputTitle}
+                    placeholder="(Required) i.e. Titanic"
+                />
 
                 <Label>Rating: </Label>
                 <InputText type="number" value={rating} onChange={this.handleChangeInputRating}
+                    placeholder="(Required) i.e. 7.7"
                     step="0.1"
                     lang="en-US"
                     min="0"
@@ -161,24 +164,31 @@ class MovieCreate extends Component {
                 />
 
                 <Label>Synopsis: </Label>
-                <InputText type="text" value={synopsis} onChange={this.handleChangeInputSynopsis}/>
+                <InputText type="text" value={synopsis} onChange={this.handleChangeInputSynopsis}
+                    placeholder="(Required) i.e. A seventeen-year-old aristocrat falls in love with a kind but poor artist aboard the luxurious, ill-fated R.M.S. Titanic."
+                />
 
                 <Label>Director: </Label>
-                <InputText type="text" value={director} onChange={this.handleChangeInputDirector}/>
+                <InputText type="text" value={director} onChange={this.handleChangeInputDirector}
+                    placeholder="(Required) i.e. James Cameron"
+                />
 
                 <Label>Writers: </Label>
                 <InputText type="text" value={writers} onChange={this.handleChangeInputWriters}
-                    pattern="(.+?)(?:,|$)"
-                    />
+                    placeholder="(Required) i.e. James Cameron, John Doe"
+                    pattern=",\s+(?=(?:(?:[^']*'){2})*[^']*$)"
+                />
 
                 <Label>Stars: </Label>
                 <InputText type="text" value={stars} onChange={this.handleChangeInputStars}
-                    pattern="(.+?)(?:,|$)"
+                    placeholder="(Required) i.e. Leonardo DiCaprio, Kate Winslet, Billy Zane"
+                    pattern=",\s+(?=(?:(?:[^']*'){2})*[^']*$)"
                 />
 
                 <Label>Showtimes: </Label>
                 <InputText type="text" value={showtimes} onChange={this.handleChangeInputShowtimes}
-                    pattern="(.+?)(?:\w\|\w|$)"
+                    placeholder="(Required) i.e. 12:30, 13:30, 14:30"
+                    pattern="^(([0-1]?[0-9]|2[0-3]):[0-5][0-9])(?:,\s*(([0-1]?[0-9]|2[0-3]):[0-5][0-9]*?))*$"
                 />
 
                 <SubmitButton onClick={this.handleSubmitMovie}>Add</SubmitButton>

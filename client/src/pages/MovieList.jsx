@@ -23,7 +23,7 @@ class UpdateMovie extends Component {
     updateMovie = event => {
         event.preventDefault()
 
-        window.location.href = `/movies/update/${this.props.id}`
+        window.location.href = `/movie/update/${this.props.id}`
     }
 
     render() {
@@ -97,6 +97,12 @@ class MovieList extends Component {
                 Header: 'Rating',
                 accessor: 'rating',
                 filterable: true,
+            },
+            {
+                Header: 'Stars',
+                accessor: 'stars',
+                filterable: true,
+                Cell: props => <span>{ props.value.join(', ')}</span>
             },
             {
                 Header: 'Showtimes',
