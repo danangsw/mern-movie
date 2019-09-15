@@ -8,7 +8,14 @@ import 'react-table/react-table.css'
 
 const Wrapper = Styled.div`
     padding: 0 40x 40x 40x;
+    margin: 0 30px;
 `
+
+const Title = Styled.h1.attrs({
+    className: 'h1',
+})``
+
+
 const Update = Styled.div`
     color: #0000ff;
     cursor: pointer;
@@ -141,6 +148,7 @@ class MovieList extends Component {
 
         return (
             <Wrapper>
+                <Title>The Movies</Title>
                 { showtable && (
                     <ReactTable
                         data={movies}
